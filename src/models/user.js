@@ -14,7 +14,7 @@ const userSchema = new mongoose.Schema(
       minLength: 2, // Adjusted length constraints for realistic names
       maxLength: 30,
     },
-    age: { type: Number, required: true },
+    age: { type: Number },
     email: { type: String, required: true, unique: true, trim: true },
     gender: {
       type: String,
@@ -25,7 +25,7 @@ const userSchema = new mongoose.Schema(
       },
     },
     password: { type: String, required: true, minLength: 8 },
-    isAdmin: { type: Boolean, default: false },
+    // isAdmin: { type: Boolean },
     phone: { type: String, unique: true },
     address: { type: String },
     state: { type: String },
@@ -33,7 +33,7 @@ const userSchema = new mongoose.Schema(
     zip: { type: String },
     city: { type: String },
     hobbies: [String], // Array of strings for hobbies
-    profilePic: { type: String, default: "default.jpg" },
+    // profilePic: { type: String, default: "default.jpg" },
     about: {
       type: String,
       default: "This is my default message for every user",
