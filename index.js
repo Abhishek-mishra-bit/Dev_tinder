@@ -3,10 +3,14 @@ const connectDB = require("./src/config/database");
 const User = require("./src/models/user");
 const validate = require("./src/utils/signupValidation");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const cookieParser = require("cookie-parser");
+const { userAuth } = require("./src/middleware/auth");
 
 const app = express();
 const port = 4000;
 app.use(express.json());
+app.use(cookieParser());
 
 // const main = async () => {
 //   // try {
@@ -77,14 +81,25 @@ app.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).send("Invalid email or password");
-    console.log(user.password);
 
-    const isPasswordValid = await bcrypt.compare(password, user.password);
+    const isPasswordValid = await user.validatePassword(password);
     if (isPasswordValid) {
+      const token = await user.getJWT();
+      res.cookie("token", token);
       return res.status(200).send("Logged in successfully");
     } else {
       return res.status(400).send("Invalid password");
     }
+  } catch (err) {
+    res.status(400).send("Error: " + err.message);
+  }
+});
+
+app.get("/profile", userAuth, async (req, res) => {
+  try {
+    const user = req.user;
+
+    res.json(user);
   } catch (err) {
     res.status(400).send("Error: " + err.message);
   }
